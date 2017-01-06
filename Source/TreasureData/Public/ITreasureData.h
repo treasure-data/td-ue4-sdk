@@ -6,10 +6,10 @@
 
 
 /**
- * The public interface to this module.  In most cases, this interface is only public to sibling modules 
+ * The public interface to this module.  In most cases, this interface is only public to sibling modules
  * within this plugin.
  */
-class IBlankPlugin : public IModuleInterface
+class ITreasureData : public IModuleInterface
 {
 
 public:
@@ -20,9 +20,9 @@ public:
 	 *
 	 * @return Returns singleton instance, loading the module on demand if needed
 	 */
-	static inline IBlankPlugin& Get()
+	static inline ITreasureData& Get()
 	{
-		return FModuleManager::LoadModuleChecked< IBlankPlugin >( "BlankPlugin" );
+		return FModuleManager::LoadModuleChecked< ITreasureData >( "TreasureData" );
 	}
 
 	/**
@@ -32,7 +32,6 @@ public:
 	 */
 	static inline bool IsAvailable()
 	{
-		return FModuleManager::Get().IsModuleLoaded( "BlankPlugin" );
+		return FModuleManager::Get().IsModuleLoaded( "TreasureData" );
 	}
 };
-

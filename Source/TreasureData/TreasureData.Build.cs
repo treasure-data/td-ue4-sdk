@@ -2,9 +2,9 @@
 
 namespace UnrealBuildTool.Rules
 {
-	public class BlankPlugin : ModuleRules
+	public class TreasureData : ModuleRules
 	{
-		public BlankPlugin(TargetInfo Target)
+		public TreasureData(TargetInfo Target)
 		{
 			PublicIncludePaths.AddRange(
 				new string[] {
@@ -14,7 +14,7 @@ namespace UnrealBuildTool.Rules
 
 			PrivateIncludePaths.AddRange(
 				new string[] {
-					"Developer/BlankPlugin/Private",
+					"TreasureData/Private",
 					// ... add other private include paths required here ...
 				}
 				);

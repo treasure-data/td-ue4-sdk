@@ -1,0 +1,25 @@
+{
+	"FileVersion" : 3,
+	"Version" : 1,
+	"VersionName" : "1.0",
+	"FriendlyName" : "Treasure Data Analytics Provider",
+	"Description" : "Analytics provider by Treasure Data.",
+	"Category" : "Analytics",
+	"CreatedBy" : "Treasure Data, Inc.",
+	"CreatedByURL" : "http://treasuredata.com",
+	"DocsURL" : "",
+	"MarketplaceURL" : "",
+	"SupportURL" : "",
+	"EnabledByDefault" : false,
+	"CanContainContent" : false,
+	"IsBetaVersion" : false,
+	"Installed" : false,
+	"Modules" :
+	[
+		{
+			"Name" : "TreasureData",
+			"Type" : "Runtime",
+			"LoadingPhase" : "Default"
+		}
+	]
+}
