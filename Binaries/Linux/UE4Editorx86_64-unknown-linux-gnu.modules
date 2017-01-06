@@ -1,0 +1,8 @@
+{
+	"Changelist" : 0,
+	"BuildId" : "28805155-68e3-4718-a346-c4bd95fe8f1a",
+	"Modules" : 
+	{
+		"BlankPlugin" : "libUE4Editor-BlankPlugin.so"
+	}
+}
