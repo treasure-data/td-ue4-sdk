@@ -23,14 +23,17 @@ namespace UnrealBuildTool.Rules
 				new string[]
 				{
 					"Core",
-					// ... add other public dependencies that you statically link with here ...
+                                        "CoreUObject",
+                                        "Engine",
+                                        "HTTP",
+                                        "Json",
 				}
 				);
 
 			PrivateDependencyModuleNames.AddRange(
 				new string[]
 				{
-					// ... add private dependencies that you statically link with here ...
+                                        "Analytics",
 				}
 				);
 
@@ -40,6 +43,7 @@ namespace UnrealBuildTool.Rules
 					// ... add any modules that your module loads dynamically here ...
 				}
 				);
+                        //PublicIncludePathModuleNames.Add("Analytics");
 		}
 	}
 }
