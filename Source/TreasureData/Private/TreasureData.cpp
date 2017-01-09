@@ -178,58 +178,41 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          FString Category = FString("");
          FString Label = FString("");
          float Value = 0;
-
-         FString outStr;
-         TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<TCHAR>::Create(&outStr);
-         JsonWriter->WriteObjectStart();
-
          int64 now_unix = FDateTime::Now().ToUnixTimestamp();
-         if (Attributes.Num() == 0) {
-           JsonWriter->WriteValue(FString("user_id"), UserId);
-           JsonWriter->WriteValue(FString("player_time"), now_unix);
-           JsonWriter->WriteValue(FString("action"), EventName);
-           JsonWriter->WriteObjectEnd();
-           JsonWriter->Close();
+         FString outStr;
 
-           TSharedRef< IHttpRequest > HttpRequest = FHttpModule::Get().CreateRequest();
-           HttpRequest->SetVerb("POST");
-           HttpRequest->SetHeader("Content-Type", "application/json");
-           HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-           HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/") + Table);
-           HttpRequest->SetContentAsString(outStr);
+         TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<TCHAR>::Create(&outStr);
 
-           HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
-           // Execute the request
-           HttpRequest->ProcessRequest();
+         /** Write JSON message */
+         JsonWriter->WriteObjectStart();
+         JsonWriter->WriteValue(FString("user_id"), UserId);
+         JsonWriter->WriteValue(FString("player_time"), now_unix);
+         JsonWriter->WriteValue(FString("action"), EventName);
 
 
-           UE_LOG(LogAnalytics, Display, TEXT("FAnalyticsProviderTreasureData::RecordEvent Post data: %s"), *outStr);
+         UE_LOG(LogAnalytics, Display, TEXT("TEST SINGLE ATTRIBUTE: %d"), Attributes.Num());
 
-           return;
-         }
-
-         for (i = 0; i < Attributes.Num(); i++)
-           {
-             if (Attributes[i].AttrName.Equals("Category") && Attributes[i].AttrValue.Len() > 0)
-               {
-                 Category = Attributes[i].AttrValue;
-               }
-             else if (Attributes[i].AttrName.Equals("Label") && Attributes[i].AttrValue.Len() > 0)
-               {
-                 Label = Attributes[i].AttrValue;
-               }
-             else if (Attributes[i].AttrName.Equals("Value"))
-               {
-                 Value = FCString::Atof(*Attributes[i].AttrValue);
-               }
-
-             UE_LOG(LogAnalytics, Display, TEXT("Action='%s' Category='%s' Label='%s' Value='%f'"),
-                    *Action, *Category, *Label, Value);
-
-             Category = "";
-             Label = "";
-             Value = 0;
+         /** Write attributes */
+         for (i = 0; i < Attributes.Num(); i++) {
+           if (Attributes[i].AttrValue.Len() > 0) {
+             JsonWriter->WriteValue(Attributes[i].AttrName, Attributes[i].AttrValue);
            }
+         }
+         JsonWriter->WriteObjectEnd();
+         JsonWriter->Close();
+
+         TSharedRef< IHttpRequest > HttpRequest = FHttpModule::Get().CreateRequest();
+         HttpRequest->SetVerb("POST");
+         HttpRequest->SetHeader("Content-Type", "application/json");
+         HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
+         HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/") + Table);
+         HttpRequest->SetContentAsString(outStr);
+
+         HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
+         // Execute the request
+         HttpRequest->ProcessRequest();
+
+         UE_LOG(LogAnalytics, Display, TEXT("FAnalyticsProviderTreasureData::RecordEvent Post data: %s"), *outStr);
 }
 
 void FAnalyticsProviderTreasureData::RecordItemPurchase(const FString& ItemId, const FString& Currency, int PerItemCost, int ItemQuantity)
