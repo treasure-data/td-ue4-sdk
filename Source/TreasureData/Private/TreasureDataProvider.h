@@ -1,3 +1,5 @@
+// Copyright 2017 Treasure Data, Inc. All Rights Reserved.
+
 #pragma once
 #include "IAnalyticsProvider.h"
 
