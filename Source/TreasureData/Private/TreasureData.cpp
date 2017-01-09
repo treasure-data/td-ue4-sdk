@@ -23,9 +23,7 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
     if (GetConfigValue.IsBound()) {
             const FString Key = GetConfigValue.Execute(TEXT("TDApiKey"), true);
             const FString DBName = GetConfigValue.Execute(TEXT("TDDatabase"), true);
-            const FString TableName = GetConfigValue.Execute(TEXT("TDTable"), true);
-
-            return FAnalyticsProviderTreasureData::Create(Key, DBName, TableName);
+            return FAnalyticsProviderTreasureData::Create(Key, DBName);
     }
     else {
       UE_LOG(LogAnalytics, Warning,
@@ -37,11 +35,9 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
 
 // Provider
 FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key,
-                                                               const FString DBName,
-                                                               const FString TableName) :
+                                                               const FString DBName) :
   ApiKey(Key),
-  Database(DBName),
-  Table(TableName)
+  Database(DBName)
 {
 
   //FileArchive = nullptr;
@@ -205,7 +201,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          HttpRequest->SetVerb("POST");
          HttpRequest->SetHeader("Content-Type", "application/json");
          HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-         HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/") + Table);
+         HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/events"));
          HttpRequest->SetContentAsString(outStr);
 
          HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
