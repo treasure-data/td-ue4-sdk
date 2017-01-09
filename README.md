@@ -5,7 +5,7 @@ This plugin behaves as an Analytics Provider for Unreal Engine 4.
 ## Requirements
 
 - Unreal Engine 4.14
-- [Treasure Data Write-Only API Key](https://console.treasuredata.com/users/current)
+- [Treasure Data Write-Only API Key](https://console.treasuredata.com/app/users) (Click on User > API Keys)
 
 ## Getting Started
 
@@ -100,3 +100,24 @@ In the Editor, click on the Blueprints dropdown menu and click on the _Open Leve
 Now in the Event graphs, different events can be connected to Analytics functions, as an example the following image demonstrate how to track the _Session Start_, _Session End_ and _Record Event w/Attributes_ events:
 
 ![](docs/assets/ue4_editor_002.jpg)
+
+After a Game starts, the plugin will send the events to Treasure Data.
+
+## Treasure Data
+
+In order to query the game events, go to the [Treasure Data Console](http://console.treasuredata.com), click on the _Databases_ item (left menu) and open the database used in the game (Config/DefaultEngine.ini > TDDatabase):
+
+![](docs/assets/ue4_td_console_001.jpg)
+
+By default two tables are created:
+
+- Sessions: start and stop sessions
+- Events: All events with or without attributes.
+
+To query records just click on any table name and click on the _Query_ top button. By default you can issue a SQL query like:
+
+```
+SELECT * from events;
+```
+
+![](docs/assets/ue4_td_console_002.jpg)
