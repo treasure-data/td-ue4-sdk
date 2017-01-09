@@ -48,7 +48,7 @@ After a few seconds the plugin binary should be available.
 
 #### Speed up plugin build phase
 
-In some cases is required to re-build only the plugin, using a normak _make_ command can take some minutes as it does some parsing running some scripts to fix dependencies, to speed up the process the following options can be added:
+In some cases is required to re-build only the plugin, using a normal _make_ command can take some minutes as it does some parsing running some scripts to fix dependencies, to speed up the process the following options can be added:
 
 ```bash
 $ make UE4Editor ARGS=-canskiplink
@@ -62,8 +62,8 @@ Inside the Unreal Engine 4 Editor, open your project and the _plugins_ window:
 
 Now enable the two required plugins:
 
-- Blueprints: located at Built-in > Analytics ![](http://edsiper.linuxchile.cl/ue4_blueprints_enable.jpg)
-- Treasure Data: located at Installed > Analytics ![](http://edsiper.linuxchile.cl/ue4_td_plugin_enable.jpg)
+- Blueprints: located at Built-in > Analytics ![](docs/assets/ue4_blueprints_enable.jpg)
+- Treasure Data: located at Installed > Analytics ![](docs/assets/ue4_td_plugin_enable.jpg)
 
 ### Configure Project settings
 
@@ -90,3 +90,13 @@ SendInterval=10
 ```
 
 Save the file and restart Unreal Engine Editor.
+
+### Gather metrics through Blueprints
+
+In the Editor, click on the Blueprints dropdown menu and click on the _Open Level Blueprint_ option:
+
+![](docs/assets/ue4_editor_001.jpg)
+
+Now in the Event graphs, different events can be connected to Analytics functions, as an example the following image demonstrate how to track the _Session Start_, _Session End_ and _Record Event w/Attributes_ events:
+
+![](docs/assets/ue4_editor_002.jpg)
