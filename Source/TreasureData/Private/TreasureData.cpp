@@ -39,10 +39,6 @@ FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key
   ApiKey(Key),
   Database(DBName)
 {
-
-  //FileArchive = nullptr;
-	//AnalyticsFilePath = FPaths::GameSavedDir() + TEXT("Analytics/");
-  //	UserId = FPlatformMisc::GetUniqueDeviceId();
 }
 
 FAnalyticsProviderTreasureData::~FAnalyticsProviderTreasureData()
@@ -106,6 +102,7 @@ void FAnalyticsProviderTreasureData::EndSession()
             JsonWriter->WriteObjectEnd();
             JsonWriter->Close();
 
+            /** HTTP request */
             TSharedRef< IHttpRequest > HttpRequest = FHttpModule::Get().CreateRequest();
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
@@ -114,7 +111,6 @@ void FAnalyticsProviderTreasureData::EndSession()
             HttpRequest->SetContentAsString(outStr);
 
             HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
-            // Execute the request
             HttpRequest->ProcessRequest();
 
             bHasSessionStarted = false;
@@ -185,9 +181,6 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          JsonWriter->WriteValue(FString("player_time"), now_unix);
          JsonWriter->WriteValue(FString("action"), EventName);
 
-
-         UE_LOG(LogAnalytics, Display, TEXT("TEST SINGLE ATTRIBUTE: %d"), Attributes.Num());
-
          /** Write attributes */
          for (i = 0; i < Attributes.Num(); i++) {
            if (Attributes[i].AttrValue.Len() > 0) {
@@ -197,6 +190,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          JsonWriter->WriteObjectEnd();
          JsonWriter->Close();
 
+         /** HTTP Request */
          TSharedRef< IHttpRequest > HttpRequest = FHttpModule::Get().CreateRequest();
          HttpRequest->SetVerb("POST");
          HttpRequest->SetHeader("Content-Type", "application/json");
@@ -205,9 +199,9 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          HttpRequest->SetContentAsString(outStr);
 
          HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
-         // Execute the request
          HttpRequest->ProcessRequest();
 
+         /** Log posted data */
          UE_LOG(LogAnalytics, Display, TEXT("FAnalyticsProviderTreasureData::RecordEvent Post data: %s"), *outStr);
 }
 
@@ -269,10 +263,10 @@ void FAnalyticsProviderTreasureData::EventRequestComplete(FHttpRequestPtr HttpRe
 {
 	if (bSucceeded && HttpResponse.IsValid())
 	{
-          UE_LOG(LogAnalytics, Display, TEXT("[TD] Calc response for [%s]. Code: %d. Payload: %s"), *HttpRequest->GetURL(), HttpResponse->GetResponseCode(), *HttpResponse->GetContentAsString());
+          UE_LOG(LogAnalytics, Display, TEXT("[TD] HTTP response for [%s]. Code: %d. Payload: %s"), *HttpRequest->GetURL(), HttpResponse->GetResponseCode(), *HttpResponse->GetContentAsString());
 	}
 	else
         {
-          UE_LOG(LogAnalytics, Display, TEXT("[TD] Calc response for [%s]. No response"), *HttpRequest->GetURL());
+          UE_LOG(LogAnalytics, Display, TEXT("[TD] HTTP response for [%s]. No response"), *HttpRequest->GetURL());
 	}
 }
