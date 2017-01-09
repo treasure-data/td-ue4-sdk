@@ -76,6 +76,7 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
             JsonWriter->WriteObjectStart();
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
+            JsonWriter->WriteValue(FString("user_id"), UserId);
             JsonWriter->WriteValue(FString("start_time"), now_unix);
             JsonWriter->WriteObjectEnd();
             JsonWriter->Close();
@@ -104,6 +105,7 @@ void FAnalyticsProviderTreasureData::EndSession()
             JsonWriter->WriteObjectStart();
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
+            JsonWriter->WriteValue(FString("user_id"), UserId);
             JsonWriter->WriteValue(FString("end_time"), now_unix);
             JsonWriter->WriteObjectEnd();
             JsonWriter->Close();
@@ -183,6 +185,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
 
          int64 now_unix = FDateTime::Now().ToUnixTimestamp();
          if (Attributes.Num() == 0) {
+           JsonWriter->WriteValue(FString("user_id"), UserId);
            JsonWriter->WriteValue(FString("player_time"), now_unix);
            JsonWriter->WriteValue(FString("action"), EventName);
            JsonWriter->WriteObjectEnd();
