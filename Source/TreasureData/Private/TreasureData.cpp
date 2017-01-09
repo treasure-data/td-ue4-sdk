@@ -37,7 +37,8 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
 FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key,
                                                                const FString DBName) :
   ApiKey(Key),
-  Database(DBName)
+  Database(DBName),
+  bHasSessionStarted(false)
 {
 }
 
