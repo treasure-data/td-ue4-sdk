@@ -5,15 +5,16 @@
 #include "IAnalyticsProviderModule.h"
 #include "Core.h"
 
-//#include "ModuleManager.h"
-
 class IAnalyticsProvider;
 
-class FAnalyticsTreasureData : public IAnalyticsProviderModule
+class FAnalyticsTreasureData :
+        public IAnalyticsProviderModule
 {
-	TSharedPtr<IAnalyticsProvider> TreasureDataProvider;
+        TSharedPtr<IAnalyticsProvider> Provider;
 
  public:
+        /** Treasure Data Constants */
+        static FString GetAPIURL() { return TEXT("https://in.treasuredata.com/postback/v3/event/"); }
 	static inline FAnalyticsTreasureData& Get()
 	{
           return FModuleManager::LoadModuleChecked< FAnalyticsTreasureData >( "TreasureData" );
@@ -22,6 +23,7 @@ class FAnalyticsTreasureData : public IAnalyticsProviderModule
  public:
 	virtual TSharedPtr<IAnalyticsProvider> CreateAnalyticsProvider(const FAnalyticsProviderConfigurationDelegate& GetConfigValue) const override;
 
+ private:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 };
