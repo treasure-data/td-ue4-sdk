@@ -14,7 +14,11 @@ class FAnalyticsTreasureData :
 
  public:
         /** Treasure Data Constants */
-        static FString GetAPIURL() { return TEXT("https://in.treasuredata.com/postback/v3/event/"); }
+        static FString GetAPIURL()
+        {
+          return TEXT("https://in.treasuredata.com/postback/v3/event/");
+        }
+
 	static inline FAnalyticsTreasureData& Get()
 	{
           return FModuleManager::LoadModuleChecked< FAnalyticsTreasureData >( "TreasureData" );

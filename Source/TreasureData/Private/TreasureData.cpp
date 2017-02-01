@@ -40,6 +40,8 @@ FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key
   Database(DBName),
   bHasSessionStarted(false)
 {
+    /** Require TD to add IP field */
+    AddEventAttribute("td_ip", "td_ip");
 }
 
 FAnalyticsProviderTreasureData::~FAnalyticsProviderTreasureData()
@@ -52,6 +54,7 @@ FAnalyticsProviderTreasureData::~FAnalyticsProviderTreasureData()
 
 bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAttribute>& Attributes)
 {
+        int i;
         UE_LOG(LogAnalytics, Display, TEXT("[TD] Session Started %s"), *ApiKey);
 
         if (!bHasSessionStarted && ApiKey.Len() > 0)
@@ -69,6 +72,15 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
             JsonWriter->WriteObjectStart();
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
+
+            /** Append fixed attributes */
+            for (i = 0; i < EventAttributes.Num(); i++) {
+              if (EventAttributes[i].AttrValue.Len() > 0) {
+                JsonWriter->WriteValue(EventAttributes[i].AttrName,
+                                       EventAttributes[i].AttrValue);
+              }
+            }
+
             JsonWriter->WriteValue(FString("user_id"), UserId);
             JsonWriter->WriteValue(FString("start_time"), now_unix);
             JsonWriter->WriteObjectEnd();
@@ -121,6 +133,7 @@ void FAnalyticsProviderTreasureData::EndSession()
 
 void FAnalyticsProviderTreasureData::FlushEvents()
 {
+            UE_LOG(LogAnalytics, Display, TEXT("[TD] FLUSH EVENTS!!!!"));
 }
 
 
@@ -182,7 +195,15 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          JsonWriter->WriteValue(FString("player_time"), now_unix);
          JsonWriter->WriteValue(FString("action"), EventName);
 
-         /** Write attributes */
+         /** Write pre-set event attributes */
+         for (i = 0; i < EventAttributes.Num(); i++) {
+           if (EventAttributes[i].AttrValue.Len() > 0) {
+             JsonWriter->WriteValue(EventAttributes[i].AttrName,
+                                    EventAttributes[i].AttrValue);
+           }
+         }
+
+         /** Write received attributes */
          for (i = 0; i < Attributes.Num(); i++) {
            if (Attributes[i].AttrValue.Len() > 0) {
              JsonWriter->WriteValue(Attributes[i].AttrName, Attributes[i].AttrValue);
@@ -270,4 +291,10 @@ void FAnalyticsProviderTreasureData::EventRequestComplete(FHttpRequestPtr HttpRe
         {
           UE_LOG(LogAnalytics, Display, TEXT("[TD] HTTP response for [%s]. No response"), *HttpRequest->GetURL());
 	}
+}
+
+void FAnalyticsProviderTreasureData::AddEventAttribute(const FString& EventName,
+                                                       const FString& EventValue)
+{
+        EventAttributes.Add(FAnalyticsEventAttribute(EventName, EventValue));
 }

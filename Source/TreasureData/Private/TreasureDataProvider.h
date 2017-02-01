@@ -34,6 +34,8 @@ class FAnalyticsProviderTreasureData :
     /** Holds the build info if set */
     FString BuildInfo;
 
+    TArray<FAnalyticsEventAttribute> EventAttributes;
+
     static TSharedPtr<IAnalyticsProvider> Provider;
     FAnalyticsProviderTreasureData(const FString Key,
                                    const FString DBName);
@@ -90,4 +92,5 @@ public:
     virtual void RecordProgress(const FString& ProgressType, const FString& ProgressHierarchy, const TArray<FAnalyticsEventAttribute>& EventAttrs) override;
     void EventRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
 
+    void AddEventAttribute(const FString& EventName, const FString& EventValue);
 };

@@ -25,8 +25,6 @@ namespace UnrealBuildTool.Rules
 					"Core",
                                         "CoreUObject",
                                         "Engine",
-                                        "HTTP",
-                                        "Json",
 				}
 				);
 
@@ -34,6 +32,8 @@ namespace UnrealBuildTool.Rules
 				new string[]
 				{
                                         "Analytics",
+                                        "HTTP",
+                                        "Json",
 				}
 				);
 
