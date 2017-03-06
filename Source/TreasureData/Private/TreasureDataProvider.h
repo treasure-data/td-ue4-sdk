@@ -34,6 +34,7 @@ class FAnalyticsProviderTreasureData :
     /** Holds the build info if set */
     FString BuildInfo;
 
+    /** Events associated when StartSession and EndSession are triggered */
     TArray<FAnalyticsEventAttribute> EventAttributes;
 
     static TSharedPtr<IAnalyticsProvider> Provider;
@@ -93,4 +94,6 @@ public:
     void EventRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
 
     void AddEventAttribute(const FString& EventName, const FString& EventValue);
+    void ClearEventAttributes();
+
 };

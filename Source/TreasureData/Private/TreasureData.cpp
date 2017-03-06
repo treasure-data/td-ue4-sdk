@@ -110,6 +110,15 @@ void FAnalyticsProviderTreasureData::EndSession()
             JsonWriter->WriteObjectStart();
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
+
+            /** Append fixed attributes */
+            for (int i = 0; i < EventAttributes.Num(); i++) {
+              if (EventAttributes[i].AttrValue.Len() > 0) {
+                JsonWriter->WriteValue(EventAttributes[i].AttrName,
+                                       EventAttributes[i].AttrValue);
+              }
+            }
+
             JsonWriter->WriteValue(FString("user_id"), UserId);
             JsonWriter->WriteValue(FString("end_time"), now_unix);
             JsonWriter->WriteObjectEnd();
@@ -296,5 +305,17 @@ void FAnalyticsProviderTreasureData::EventRequestComplete(FHttpRequestPtr HttpRe
 void FAnalyticsProviderTreasureData::AddEventAttribute(const FString& EventName,
                                                        const FString& EventValue)
 {
+        for (int i = 0; i < EventAttributes.Num(); i++) {
+                if (EventAttributes[i].AttrName == EventName) {
+                        EventAttributes[i].AttrValue = EventValue;
+                        return;
+                }
+        }
         EventAttributes.Add(FAnalyticsEventAttribute(EventName, EventValue));
+}
+
+void FAnalyticsProviderTreasureData::ClearEventAttributes()
+{
+        EventAttributes.Empty(0);
+        AddEventAttribute("td_ip", "td_ip");
 }
