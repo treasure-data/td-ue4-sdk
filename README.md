@@ -4,7 +4,7 @@ This plugin behaves as an Analytics Provider for Unreal Engine 4.
 
 ## Requirements
 
-- Unreal Engine 4.14
+- Unreal Engine 4.17
 - [Treasure Data Write-Only API Key](https://console.treasuredata.com/app/users) (Click on User > API Keys)
 
 ## Getting Started
