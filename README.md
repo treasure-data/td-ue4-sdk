@@ -19,6 +19,12 @@ Get a copy of the plugin from the main GIT repository:
 $ git glone http://github.com/treasure-data/td-ue4-sdk
 ```
 
+Switch to 4.17 branch:
+
+```
+$ git checkout UE-4.17
+```
+
 Copy the new __td-ue4-sdk__ to your Engine plugins folder, the target path looks like:
 
 ```
