@@ -2,6 +2,7 @@
 
 #pragma once
 #include "IAnalyticsProvider.h"
+#include "Http.h"
 
 class FAnalyticsProviderTreasureData :
   public IAnalyticsProvider

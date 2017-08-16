@@ -1,7 +1,7 @@
 {
 	"FileVersion" : 3,
 	"Version" : 1,
-	"VersionName" : "1.4",
+	"VersionName" : "1.6",
 	"FriendlyName" : "Treasure Data Analytics Provider",
 	"Description" : "Analytics provider by Treasure Data.",
 	"Category" : "Analytics",
@@ -14,7 +14,8 @@
 	"CanContainContent" : false,
 	"IsBetaVersion" : false,
 	"Installed" : true,
-	"Modules" :
+        "EngineVersion": "4.17.0",
+        "Modules" :
 	[
 	    {
 		"Name" : "TreasureData",

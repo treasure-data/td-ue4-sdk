@@ -3,7 +3,6 @@
 #pragma once
 
 #include "IAnalyticsProviderModule.h"
-#include "Core.h"
 
 class IAnalyticsProvider;
 

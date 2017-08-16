@@ -1,5 +1,6 @@
 // Copyright 2017 Treasure Data, Inc. All Rights Reserved.
 
+#include "TreasureData.h"
 #include "TreasureDataPrivatePCH.h"
 #include <string>
 
