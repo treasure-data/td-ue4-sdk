@@ -43,6 +43,10 @@ FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key
 {
     /** Require TD to add IP field */
     AddEventAttribute("td_ip", "td_ip");
+    AddEventAttribute("td_locale_lang",
+                      FPlatformMisc::GetDefaultLanguage());
+    AddEventAttribute("td_locale_country",
+                      FPlatformMisc::GetDefaultLocale());
 }
 
 FAnalyticsProviderTreasureData::~FAnalyticsProviderTreasureData()
@@ -319,4 +323,8 @@ void FAnalyticsProviderTreasureData::ClearEventAttributes()
 {
         EventAttributes.Empty(0);
         AddEventAttribute("td_ip", "td_ip");
+        AddEventAttribute("td_locale_lang",
+                          FPlatformMisc::GetDefaultLanguage());
+        AddEventAttribute("td_locale_country",
+                          FPlatformMisc::GetDefaultLocale());
 }
