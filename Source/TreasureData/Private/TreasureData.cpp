@@ -80,9 +80,9 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
 
             /** Append fixed attributes */
             for (i = 0; i < EventAttributes.Num(); i++) {
-              if (EventAttributes[i].AttrValue.Len() > 0) {
+              if (EventAttributes[i].ToString().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                       EventAttributes[i].AttrValue);
+                                       EventAttributes[i].ToString());
               }
             }
 
@@ -118,9 +118,9 @@ void FAnalyticsProviderTreasureData::EndSession()
 
             /** Append fixed attributes */
             for (int i = 0; i < EventAttributes.Num(); i++) {
-              if (EventAttributes[i].AttrValue.Len() > 0) {
+              if (EventAttributes[i].ToString().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                       EventAttributes[i].AttrValue);
+                                       EventAttributes[i].ToString());
               }
             }
 
@@ -211,16 +211,17 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
 
          /** Write pre-set event attributes */
          for (i = 0; i < EventAttributes.Num(); i++) {
-           if (EventAttributes[i].AttrValue.Len() > 0) {
+           if (EventAttributes[i].ToString().Len() > 0) {
              JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                    EventAttributes[i].AttrValue);
+                                    EventAttributes[i].ToString());
            }
          }
 
          /** Write received attributes */
          for (i = 0; i < Attributes.Num(); i++) {
-           if (Attributes[i].AttrValue.Len() > 0) {
-             JsonWriter->WriteValue(Attributes[i].AttrName, Attributes[i].AttrValue);
+           if (Attributes[i].ToString().Len() > 0) {
+             JsonWriter->WriteValue(Attributes[i].AttrName,
+                                    Attributes[i].ToString());
            }
          }
          JsonWriter->WriteObjectEnd();
@@ -312,8 +313,8 @@ void FAnalyticsProviderTreasureData::AddEventAttribute(const FString& EventName,
 {
         for (int i = 0; i < EventAttributes.Num(); i++) {
                 if (EventAttributes[i].AttrName == EventName) {
-                        EventAttributes[i].AttrValue = EventValue;
-                        return;
+                        EventAttributes.RemoveAt(i);
+                        break;
                 }
         }
         EventAttributes.Add(FAnalyticsEventAttribute(EventName, EventValue));
