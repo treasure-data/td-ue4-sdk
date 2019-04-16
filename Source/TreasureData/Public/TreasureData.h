@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "IAnalyticsProviderModule.h"
+#include "Interfaces/IAnalyticsProviderModule.h"
 
 class IAnalyticsProvider;
 
