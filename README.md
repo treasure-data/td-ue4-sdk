@@ -4,7 +4,7 @@ This plugin behaves as an Analytics Provider for Unreal Engine 4.
 
 ## Requirements
 
-- Unreal Engine 4.22
+- Unreal Engine 4.23
 - [Treasure Data Write-Only API Key](https://console.treasuredata.com/app/users) (Click on User > API Keys)
 
 ## Getting Started
@@ -19,10 +19,10 @@ Get a copy of the plugin from the main GIT repository:
 $ git glone http://github.com/treasure-data/td-ue4-sdk
 ```
 
-Switch to UE-4.22 branch:
+Switch to UE-4.23 branch:
 
 ```
-$ git checkout UE-4.22
+$ git checkout UE-4.23
 ```
 
 Copy the new __td-ue4-sdk__ to your Engine plugins folder, the target path looks like:
