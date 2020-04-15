@@ -9,6 +9,8 @@ IMPLEMENT_MODULE( FAnalyticsTreasureData, TreasureData )
 
 TSharedPtr<IAnalyticsProvider> FAnalyticsProviderTreasureData::Provider;
 
+FAnalyticsTreasureData::FAnalyticsRegion FAnalyticsTreasureData::Region;
+
 void FAnalyticsTreasureData::StartupModule()
 {
 }
