@@ -9,8 +9,6 @@ IMPLEMENT_MODULE( FAnalyticsTreasureData, TreasureData )
 
 TSharedPtr<IAnalyticsProvider> FAnalyticsProviderTreasureData::Provider;
 
-FAnalyticsTreasureData::FAnalyticsRegion FAnalyticsTreasureData::Region;
-
 void FAnalyticsTreasureData::StartupModule()
 {
 }
@@ -26,7 +24,35 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
     if (GetConfigValue.IsBound()) {
             const FString Key = GetConfigValue.Execute(TEXT("TDApiKey"), true);
             const FString DBName = GetConfigValue.Execute(TEXT("TDDatabase"), true);
-            return FAnalyticsProviderTreasureData::Create(Key, DBName);
+			const FString TRegion = GetConfigValue.Execute(TEXT("TDRegion"), false);
+
+			FAnalyticsProviderTreasureData::FAnalyticsRegion Region = FAnalyticsProviderTreasureData::US02;
+
+			if (!TRegion.IsEmpty())
+			{
+				if (TRegion.ToUpper().Equals("US02"))
+				{
+					Region = FAnalyticsProviderTreasureData::US02;
+				}
+				else if (TRegion.ToUpper().Equals("AP01"))
+				{
+					Region = FAnalyticsProviderTreasureData::AP01;
+				}
+				else if (TRegion.ToUpper().Equals("AP02"))
+				{
+					Region = FAnalyticsProviderTreasureData::AP02;
+				}
+				else if (TRegion.ToUpper().Equals("EU01"))
+				{
+					Region = FAnalyticsProviderTreasureData::EU01;
+				}
+				else
+				{
+					UE_LOG(LogAnalytics, Warning, TEXT("Invalid/Unknown value for TDRegion. Defaulting to 'US02'"));
+				}
+			}
+
+            return FAnalyticsProviderTreasureData::Create(Key, DBName, Region);
     }
     else {
       UE_LOG(LogAnalytics, Warning,
@@ -38,9 +64,11 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
 
 // Provider
 FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key,
-                                                               const FString DBName) :
+                                                               const FString DBName,
+	                                                           FAnalyticsRegion ERegion) :
   ApiKey(Key),
   Database(DBName),
+  Region(ERegion),
   bHasSessionStarted(false)
 {
     /** Require TD to add IP field */
@@ -97,7 +125,7 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
             HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-            HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/sessions"));
+            HttpRequest->SetURL(GetAPIURL() + Database + FString("/sessions"));
             HttpRequest->SetContentAsString(outStr);
 
             HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
@@ -136,7 +164,7 @@ void FAnalyticsProviderTreasureData::EndSession()
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
             HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-            HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/sessions"));
+            HttpRequest->SetURL(GetAPIURL() + Database + FString("/sessions"));
             HttpRequest->SetContentAsString(outStr);
 
             HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
@@ -234,7 +262,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          HttpRequest->SetVerb("POST");
          HttpRequest->SetHeader("Content-Type", "application/json");
          HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-         HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/events"));
+         HttpRequest->SetURL(GetAPIURL() + Database + FString("/events"));
          HttpRequest->SetContentAsString(outStr);
 
          HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
