@@ -80,18 +80,21 @@ From your project directory, open and edit the file _Config/DefaultEngine.ini_ a
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
+TDRegion=[US02,AP01,AP02,EU01]
 SendInterval=10
 
 [AnalyticsDevelopment]
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
+TDRegion=[US02,AP01,AP02,EU01]
 SendInterval=10
 
 [AnalyticsTest]
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
+TDRegion=[US02,AP01,AP02,EU01]
 SendInterval=10
 ```
 

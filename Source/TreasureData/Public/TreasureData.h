@@ -3,25 +3,20 @@
 #pragma once
 
 #include "Interfaces/IAnalyticsProviderModule.h"
+#include "Modules/ModuleManager.h"
 
 class IAnalyticsProvider;
 
-class FAnalyticsTreasureData :
-        public IAnalyticsProviderModule
+class FAnalyticsTreasureData : public IAnalyticsProviderModule
 {
-        TSharedPtr<IAnalyticsProvider> Provider;
+	TSharedPtr<IAnalyticsProvider> Provider;
 
  public:
-        /** Treasure Data Constants */
-        static FString GetAPIURL()
-        {
-          return TEXT("https://in.treasuredata.com/postback/v3/event/");
-        }
-
-	static inline FAnalyticsTreasureData& Get()
-	{
-          return FModuleManager::LoadModuleChecked< FAnalyticsTreasureData >( "TreasureData" );
-	}
+	 /** Treasure Data Constants */
+	 static inline FAnalyticsTreasureData& Get()
+	 {
+		 return FModuleManager::LoadModuleChecked< FAnalyticsTreasureData >("TreasureData");
+	 }
 
  public:
 	virtual TSharedPtr<IAnalyticsProvider> CreateAnalyticsProvider(const FAnalyticsProviderConfigurationDelegate& GetConfigValue) const override;
