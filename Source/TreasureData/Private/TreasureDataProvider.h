@@ -119,7 +119,7 @@ public:
 		case US02:
 			return TEXT("https://in.treasuredata.com/postback/v3/event/");
 		case AP01:
-			return TEXT("https://tokyo.in-development.treasuredata.com/postback/v3/event/");
+			return TEXT("https://tokyo.in.treasuredata.com/postback/v3/event/");
 		case AP02:
 			return TEXT("https://ap02.in.treasuredata.com/postback/v3/event/");
 		case EU01:
