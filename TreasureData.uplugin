@@ -1,7 +1,7 @@
 {
 	"FileVersion" : 3,
 	"Version" : 1,
-	"VersionName" : "2.3",
+	"VersionName" : "2.4",
 	"FriendlyName" : "Treasure Data Analytics Provider",
 	"Description" : "Analytics provider by Treasure Data.",
 	"Category" : "Analytics",
