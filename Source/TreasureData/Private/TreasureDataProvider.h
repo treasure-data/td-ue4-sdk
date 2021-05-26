@@ -9,7 +9,7 @@ class FAnalyticsProviderTreasureData :
 {
 public:
 
-	static enum FAnalyticsRegion { US02, AP01, AP02, EU01 };
+	enum FAnalyticsRegion { US02, AP01, AP02, EU01 };
 
 private:
 
