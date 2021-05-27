@@ -98,6 +98,8 @@ TDRegion=[US02,AP01,AP02,EU01]
 SendInterval=10
 ```
 
+`TDDatabase` name must be shorter than 120 chars (The actual limitation: the total length of database and table must be shorter than 129 chars).
+
 Save the file and restart Unreal Engine Editor.
 
 ### Gather metrics through Blueprints
