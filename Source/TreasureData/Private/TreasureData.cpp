@@ -110,9 +110,9 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
 
             /** Append fixed attributes */
             for (i = 0; i < EventAttributes.Num(); i++) {
-              if (EventAttributes[i].ToString().Len() > 0) {
-                JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                       EventAttributes[i].ToString());
+              if (EventAttributes[i].GetValue().Len() > 0) {
+                JsonWriter->WriteValue(EventAttributes[i].GetName(),
+                                       EventAttributes[i].GetValue());
               }
             }
 
@@ -121,7 +121,7 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
             JsonWriter->WriteObjectEnd();
             JsonWriter->Close();
 
-            TSharedRef< IHttpRequest > HttpRequest = FHttpModule::Get().CreateRequest();
+            TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
             HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
@@ -148,9 +148,9 @@ void FAnalyticsProviderTreasureData::EndSession()
 
             /** Append fixed attributes */
             for (int i = 0; i < EventAttributes.Num(); i++) {
-              if (EventAttributes[i].ToString().Len() > 0) {
-                JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                       EventAttributes[i].ToString());
+              if (EventAttributes[i].GetValue().Len() > 0) {
+                JsonWriter->WriteValue(EventAttributes[i].GetName(),
+                                       EventAttributes[i].GetValue());
               }
             }
 
@@ -160,7 +160,7 @@ void FAnalyticsProviderTreasureData::EndSession()
             JsonWriter->Close();
 
             /** HTTP request */
-            TSharedRef< IHttpRequest > HttpRequest = FHttpModule::Get().CreateRequest();
+            TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
             HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
@@ -241,24 +241,24 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
 
          /** Write pre-set event attributes */
          for (i = 0; i < EventAttributes.Num(); i++) {
-           if (EventAttributes[i].ToString().Len() > 0) {
-             JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                    EventAttributes[i].ToString());
+           if (EventAttributes[i].GetValue().Len() > 0) {
+             JsonWriter->WriteValue(EventAttributes[i].GetName(),
+                                    EventAttributes[i].GetValue());
            }
          }
 
          /** Write received attributes */
          for (i = 0; i < Attributes.Num(); i++) {
-           if (Attributes[i].ToString().Len() > 0) {
-             JsonWriter->WriteValue(Attributes[i].AttrName,
-                                    Attributes[i].ToString());
+           if (Attributes[i].GetValue().Len() > 0) {
+             JsonWriter->WriteValue(Attributes[i].GetName(),
+                                    Attributes[i].GetValue());
            }
          }
          JsonWriter->WriteObjectEnd();
          JsonWriter->Close();
 
          /** HTTP Request */
-         TSharedRef< IHttpRequest > HttpRequest = FHttpModule::Get().CreateRequest();
+         TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
          HttpRequest->SetVerb("POST");
          HttpRequest->SetHeader("Content-Type", "application/json");
          HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
@@ -342,7 +342,7 @@ void FAnalyticsProviderTreasureData::AddEventAttribute(const FString& EventName,
                                                        const FString& EventValue)
 {
         for (int i = 0; i < EventAttributes.Num(); i++) {
-                if (EventAttributes[i].AttrName == EventName) {
+                if (EventAttributes[i].GetName() == EventName) {
                         EventAttributes.RemoveAt(i);
                         break;
                 }
