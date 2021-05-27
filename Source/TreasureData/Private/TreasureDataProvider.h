@@ -1,14 +1,23 @@
 // Copyright 2017 Treasure Data, Inc. All Rights Reserved.
 
 #pragma once
-#include "IAnalyticsProvider.h"
+#include "Interfaces/IAnalyticsProvider.h"
+#include "Http.h"
 
 class FAnalyticsProviderTreasureData :
   public IAnalyticsProvider
 {
+public:
+
+	enum FAnalyticsRegion { US02, AP01, AP02, EU01 };
+
+private:
+
     /** Treasure Data */
     FString ApiKey;
     FString Database;
+
+	FAnalyticsRegion Region;
 
     /** Tracks whether we need to start the session or restart it */
     bool bHasSessionStarted;
@@ -39,15 +48,17 @@ class FAnalyticsProviderTreasureData :
 
     static TSharedPtr<IAnalyticsProvider> Provider;
     FAnalyticsProviderTreasureData(const FString Key,
-                                   const FString DBName);
+                                   const FString DBName,
+								   FAnalyticsRegion Region);
 
 public:
   static TSharedPtr<IAnalyticsProvider> Create(const FString Key,
-                                               const FString DBName)
+                                               const FString DBName,
+	                                           FAnalyticsRegion Region)
     {
          if (!Provider.IsValid())
          {
-           Provider = TSharedPtr<IAnalyticsProvider>(new FAnalyticsProviderTreasureData(Key, DBName));
+           Provider = TSharedPtr<IAnalyticsProvider>(new FAnalyticsProviderTreasureData(Key, DBName, Region));
          }
              return Provider;
        }
@@ -96,4 +107,26 @@ public:
     void AddEventAttribute(const FString& EventName, const FString& EventValue);
     void ClearEventAttributes();
 
+	inline FAnalyticsRegion GetRegion()
+	{
+		return Region;
+	}
+
+	inline FString GetAPIURL()
+	{
+		switch (GetRegion())
+		{
+		case US02:
+			return TEXT("https://in.treasuredata.com/postback/v3/event/");
+		case AP01:
+			return TEXT("https://tokyo.in.treasuredata.com/postback/v3/event/");
+		case AP02:
+			return TEXT("https://ap02.in.treasuredata.com/postback/v3/event/");
+		case EU01:
+			return TEXT("https://eu01.in.treasuredata.com/postback/v3/event/");
+		default:
+			// Default is US02 collection endpoint
+			return TEXT("https://in.treasuredata.com/postback/v3/event/");
+		}
+	}
 };

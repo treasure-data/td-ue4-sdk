@@ -4,7 +4,7 @@ namespace UnrealBuildTool.Rules
 {
 	public class TreasureData : ModuleRules
 	{
-		public TreasureData(TargetInfo Target)
+		public TreasureData(ReadOnlyTargetRules Target): base(Target)
 		{
 			PublicIncludePaths.AddRange(
 				new string[] {

@@ -1,5 +1,6 @@
 // Copyright 2017 Treasure Data, Inc. All Rights Reserved.
 
+#include "TreasureData.h"
 #include "TreasureDataPrivatePCH.h"
 #include <string>
 
@@ -23,7 +24,35 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
     if (GetConfigValue.IsBound()) {
             const FString Key = GetConfigValue.Execute(TEXT("TDApiKey"), true);
             const FString DBName = GetConfigValue.Execute(TEXT("TDDatabase"), true);
-            return FAnalyticsProviderTreasureData::Create(Key, DBName);
+			const FString TRegion = GetConfigValue.Execute(TEXT("TDRegion"), false);
+
+			FAnalyticsProviderTreasureData::FAnalyticsRegion Region = FAnalyticsProviderTreasureData::US02;
+
+			if (!TRegion.IsEmpty())
+			{
+				if (TRegion.ToUpper().Equals("US02"))
+				{
+					Region = FAnalyticsProviderTreasureData::US02;
+				}
+				else if (TRegion.ToUpper().Equals("AP01"))
+				{
+					Region = FAnalyticsProviderTreasureData::AP01;
+				}
+				else if (TRegion.ToUpper().Equals("AP02"))
+				{
+					Region = FAnalyticsProviderTreasureData::AP02;
+				}
+				else if (TRegion.ToUpper().Equals("EU01"))
+				{
+					Region = FAnalyticsProviderTreasureData::EU01;
+				}
+				else
+				{
+					UE_LOG(LogAnalytics, Warning, TEXT("Invalid/Unknown value for TDRegion. Defaulting to 'US02'"));
+				}
+			}
+
+            return FAnalyticsProviderTreasureData::Create(Key, DBName, Region);
     }
     else {
       UE_LOG(LogAnalytics, Warning,
@@ -35,13 +64,19 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
 
 // Provider
 FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key,
-                                                               const FString DBName) :
+                                                               const FString DBName,
+	                                                           FAnalyticsRegion ERegion) :
   ApiKey(Key),
   Database(DBName),
+  Region(ERegion),
   bHasSessionStarted(false)
 {
     /** Require TD to add IP field */
     AddEventAttribute("td_ip", "td_ip");
+    AddEventAttribute("td_locale_lang",
+                      FPlatformMisc::GetDefaultLanguage());
+    AddEventAttribute("td_locale_country",
+                      FPlatformMisc::GetDefaultLocale());
 }
 
 FAnalyticsProviderTreasureData::~FAnalyticsProviderTreasureData()
@@ -75,9 +110,9 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
 
             /** Append fixed attributes */
             for (i = 0; i < EventAttributes.Num(); i++) {
-              if (EventAttributes[i].AttrValue.Len() > 0) {
+              if (EventAttributes[i].ToString().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                       EventAttributes[i].AttrValue);
+                                       EventAttributes[i].ToString());
               }
             }
 
@@ -90,7 +125,7 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
             HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-            HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/sessions"));
+            HttpRequest->SetURL(GetAPIURL() + Database + FString("/sessions"));
             HttpRequest->SetContentAsString(outStr);
 
             HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
@@ -113,9 +148,9 @@ void FAnalyticsProviderTreasureData::EndSession()
 
             /** Append fixed attributes */
             for (int i = 0; i < EventAttributes.Num(); i++) {
-              if (EventAttributes[i].AttrValue.Len() > 0) {
+              if (EventAttributes[i].ToString().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                       EventAttributes[i].AttrValue);
+                                       EventAttributes[i].ToString());
               }
             }
 
@@ -129,7 +164,7 @@ void FAnalyticsProviderTreasureData::EndSession()
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
             HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-            HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/sessions"));
+            HttpRequest->SetURL(GetAPIURL() + Database + FString("/sessions"));
             HttpRequest->SetContentAsString(outStr);
 
             HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
@@ -206,16 +241,17 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
 
          /** Write pre-set event attributes */
          for (i = 0; i < EventAttributes.Num(); i++) {
-           if (EventAttributes[i].AttrValue.Len() > 0) {
+           if (EventAttributes[i].ToString().Len() > 0) {
              JsonWriter->WriteValue(EventAttributes[i].AttrName,
-                                    EventAttributes[i].AttrValue);
+                                    EventAttributes[i].ToString());
            }
          }
 
          /** Write received attributes */
          for (i = 0; i < Attributes.Num(); i++) {
-           if (Attributes[i].AttrValue.Len() > 0) {
-             JsonWriter->WriteValue(Attributes[i].AttrName, Attributes[i].AttrValue);
+           if (Attributes[i].ToString().Len() > 0) {
+             JsonWriter->WriteValue(Attributes[i].AttrName,
+                                    Attributes[i].ToString());
            }
          }
          JsonWriter->WriteObjectEnd();
@@ -226,7 +262,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          HttpRequest->SetVerb("POST");
          HttpRequest->SetHeader("Content-Type", "application/json");
          HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
-         HttpRequest->SetURL(FAnalyticsTreasureData::GetAPIURL() + Database + FString("/events"));
+         HttpRequest->SetURL(GetAPIURL() + Database + FString("/events"));
          HttpRequest->SetContentAsString(outStr);
 
          HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
@@ -307,8 +343,8 @@ void FAnalyticsProviderTreasureData::AddEventAttribute(const FString& EventName,
 {
         for (int i = 0; i < EventAttributes.Num(); i++) {
                 if (EventAttributes[i].AttrName == EventName) {
-                        EventAttributes[i].AttrValue = EventValue;
-                        return;
+                        EventAttributes.RemoveAt(i);
+                        break;
                 }
         }
         EventAttributes.Add(FAnalyticsEventAttribute(EventName, EventValue));
@@ -318,4 +354,8 @@ void FAnalyticsProviderTreasureData::ClearEventAttributes()
 {
         EventAttributes.Empty(0);
         AddEventAttribute("td_ip", "td_ip");
+        AddEventAttribute("td_locale_lang",
+                          FPlatformMisc::GetDefaultLanguage());
+        AddEventAttribute("td_locale_country",
+                          FPlatformMisc::GetDefaultLocale());
 }

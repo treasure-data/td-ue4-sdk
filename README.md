@@ -4,7 +4,7 @@ This plugin behaves as an Analytics Provider for Unreal Engine 4.
 
 ## Requirements
 
-- Unreal Engine 4.14
+- Unreal Engine 4.25
 - [Treasure Data Write-Only API Key](https://console.treasuredata.com/app/users) (Click on User > API Keys)
 
 ## Getting Started
@@ -17,6 +17,12 @@ Get a copy of the plugin from the main GIT repository:
 
 ```
 $ git glone http://github.com/treasure-data/td-ue4-sdk
+```
+
+Switch to UE-4.25 branch:
+
+```
+$ git checkout UE-4.25
 ```
 
 Copy the new __td-ue4-sdk__ to your Engine plugins folder, the target path looks like:
@@ -74,18 +80,21 @@ From your project directory, open and edit the file _Config/DefaultEngine.ini_ a
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
+TDRegion=[US02,AP01,AP02,EU01]
 SendInterval=10
 
 [AnalyticsDevelopment]
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
+TDRegion=[US02,AP01,AP02,EU01]
 SendInterval=10
 
 [AnalyticsTest]
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
+TDRegion=[US02,AP01,AP02,EU01]
 SendInterval=10
 ```
 
