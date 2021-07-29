@@ -42,6 +42,10 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
 				{
 					Region = FAnalyticsProviderTreasureData::AP02;
 				}
+				else if (TRegion.ToUpper().Equals("AP03"))
+				{
+					Region = FAnalyticsProviderTreasureData::AP03;
+				}
 				else if (TRegion.ToUpper().Equals("EU01"))
 				{
 					Region = FAnalyticsProviderTreasureData::EU01;
