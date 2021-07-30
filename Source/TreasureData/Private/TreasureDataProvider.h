@@ -9,7 +9,7 @@ class FAnalyticsProviderTreasureData :
 {
 public:
 
-	enum FAnalyticsRegion { US02, AP01, AP02, EU01 };
+	enum FAnalyticsRegion { US02, AP01, AP02, AP03, EU01 };
 
 private:
 
@@ -122,6 +122,8 @@ public:
 			return TEXT("https://tokyo.in.treasuredata.com/postback/v3/event/");
 		case AP02:
 			return TEXT("https://ap02.in.treasuredata.com/postback/v3/event/");
+		case AP03:
+			return TEXT("https://ap03.in.treasuredata.com/postback/v3/event/");
 		case EU01:
 			return TEXT("https://eu01.in.treasuredata.com/postback/v3/event/");
 		default:
