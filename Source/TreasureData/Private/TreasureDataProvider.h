@@ -102,7 +102,7 @@ public:
     /**
      * Start the session
      * @param Additional event attributes
-     * @return bool todo description
+     * @return bool true if session started successfully
      */
     virtual bool StartSession(const TArray<FAnalyticsEventAttribute>& Attributes) override;
     
@@ -112,7 +112,7 @@ public:
     virtual void EndSession() override;
     
     /**
-     * todo description
+     * No need for documentation
      */
     virtual void FlushEvents() override;
 
@@ -137,7 +137,7 @@ public:
     /**
      * Set the Session ID of the User
      * @param InSessionID session id as a string
-     * @return bool todo description
+     * @return bool true if session id set successfully
      */
     virtual bool SetSessionID(const FString& InSessionID) override;
 
@@ -239,10 +239,7 @@ public:
     virtual void RecordProgress(const FString& ProgressType, const FString& ProgressHierarchy, const TArray<FAnalyticsEventAttribute>& EventAttrs) override;
     
     /**
-     * todo description
-     * @param HttpRequest todo description
-     * @param HttpResponse todo description
-     * @param bSucceeded todo description
+     * Internal. No need for documentation
      */
     void EventRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
 
