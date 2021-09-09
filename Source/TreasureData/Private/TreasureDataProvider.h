@@ -6,6 +6,7 @@
 
 /**
  * Treasure Data Unreal Engine Analytics Provider plugin.
+ * This SDK will immediately upload events upon adding them. No local buffer used.
  */
 class FAnalyticsProviderTreasureData :
   public IAnalyticsProvider
@@ -111,9 +112,6 @@ public:
      */
     virtual void EndSession() override;
     
-    /**
-     * No need for documentation
-     */
     virtual void FlushEvents() override;
 
     /**
@@ -238,9 +236,6 @@ public:
      */
     virtual void RecordProgress(const FString& ProgressType, const FString& ProgressHierarchy, const TArray<FAnalyticsEventAttribute>& EventAttrs) override;
     
-    /**
-     * Internal. No need for documentation
-     */
     void EventRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
 
     /**
