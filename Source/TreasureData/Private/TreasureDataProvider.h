@@ -102,7 +102,7 @@ public:
 
     /**
      * Start the session
-     * @param Additional event attributes
+     * @param Attributes Additional event attributes
      * @return bool true if session started successfully
      */
     virtual bool StartSession(const TArray<FAnalyticsEventAttribute>& Attributes) override;
@@ -260,6 +260,7 @@ public:
 
   /**
    * Convenience function to transform API Endpoint enumerations into postback API address string.
+   * @return string with the postback api endpoint
    */
   inline FString GetAPIURL()
   {
