@@ -6,7 +6,8 @@
 
 {% endif -%}
 
-{% if exists("paramList") %} ####Parameters
+{% if exists("paramList") %}
+
 Param 		| Description
 ------------|------------
 {% for param in paramList %}  {{param.name}} | {{param.text}}
