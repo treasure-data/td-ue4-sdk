@@ -75,7 +75,7 @@ FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key
   Region(ERegion),
   bHasSessionStarted(false)
 {
-    /** Require TD to add IP field */
+    // Require TD to add IP field
     AddEventAttribute("td_ip", "td_ip");
     AddEventAttribute("td_locale_lang",
                       FPlatformMisc::GetDefaultLanguage());
@@ -112,7 +112,7 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
 
-            /** Append fixed attributes */
+            // Append fixed attributes
             for (i = 0; i < EventAttributes.Num(); i++) {
               if (EventAttributes[i].GetValue().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].GetName(),
@@ -150,7 +150,7 @@ void FAnalyticsProviderTreasureData::EndSession()
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
 
-            /** Append fixed attributes */
+            // Append fixed attributes
             for (int i = 0; i < EventAttributes.Num(); i++) {
               if (EventAttributes[i].GetValue().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].GetName(),
@@ -163,7 +163,7 @@ void FAnalyticsProviderTreasureData::EndSession()
             JsonWriter->WriteObjectEnd();
             JsonWriter->Close();
 
-            /** HTTP request */
+            // HTTP request
             TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
             HttpRequest->SetVerb("POST");
             HttpRequest->SetHeader("Content-Type", "application/json");
@@ -237,13 +237,13 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
 
          TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<TCHAR>::Create(&outStr);
 
-         /** Write JSON message */
+         // Write JSON message 
          JsonWriter->WriteObjectStart();
          JsonWriter->WriteValue(FString("user_id"), UserId);
          JsonWriter->WriteValue(FString("player_time"), now_unix);
          JsonWriter->WriteValue(FString("action"), EventName);
 
-         /** Write pre-set event attributes */
+         // Write pre-set event attributes 
          for (i = 0; i < EventAttributes.Num(); i++) {
            if (EventAttributes[i].GetValue().Len() > 0) {
              JsonWriter->WriteValue(EventAttributes[i].GetName(),
@@ -251,7 +251,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
            }
          }
 
-         /** Write received attributes */
+         // Write received attributes
          for (i = 0; i < Attributes.Num(); i++) {
            if (Attributes[i].GetValue().Len() > 0) {
              JsonWriter->WriteValue(Attributes[i].GetName(),
@@ -261,7 +261,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          JsonWriter->WriteObjectEnd();
          JsonWriter->Close();
 
-         /** HTTP Request */
+         // HTTP Request
          TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
          HttpRequest->SetVerb("POST");
          HttpRequest->SetHeader("Content-Type", "application/json");
@@ -272,7 +272,7 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
          HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
          HttpRequest->ProcessRequest();
 
-         /** Log posted data */
+         // Log posted data
          UE_LOG(LogAnalytics, Display, TEXT("FAnalyticsProviderTreasureData::RecordEvent Post data: %s"), *outStr);
 }
 

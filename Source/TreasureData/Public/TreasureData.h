@@ -12,7 +12,7 @@ class FAnalyticsTreasureData : public IAnalyticsProviderModule
 	TSharedPtr<IAnalyticsProvider> Provider;
 
  public:
-	 /** Treasure Data Constants */
+	 // Treasure Data Constants
 	 static inline FAnalyticsTreasureData& Get()
 	 {
 		 return FModuleManager::LoadModuleChecked< FAnalyticsTreasureData >("TreasureData");
