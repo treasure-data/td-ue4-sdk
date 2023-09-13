@@ -1,10 +1,17 @@
-# Treasure Data Analytics Plugin for Unreal Engine 4
+# Treasure Data Analytics Plugin for Unreal Engine 5
 
-This plugin behaves as an Analytics Provider for Unreal Engine 4.
+This plugin behaves as an Analytics Provider for Unreal Engine 5.
 
 ## Requirements
 
-- Unreal Engine 4.26
+- Unreal Engine 5.3.0 
+
+Follow the instructions in the link below to get access to UnrealEngine repository:
+
+https://github.com/EpicGames/Signup
+
+After getting access to the UnrealEngine repository, you should clone it to your local machine.
+
 - [Treasure Data Write-Only API Key](https://console.treasuredata.com/app/users) (Click on User > API Keys)
 
 ## Getting Started
@@ -19,10 +26,10 @@ Get a copy of the plugin from the main GIT repository:
 $ git glone http://github.com/treasure-data/td-ue4-sdk
 ```
 
-Switch to UE-4.26 branch:
+Switch to UE-5.3 branch:
 
 ```
-$ git checkout UE-4.26
+$ git checkout UE-5.3
 ```
 
 Copy the new __td-ue4-sdk__ to your Engine plugins folder, the target path looks like:
@@ -34,35 +41,11 @@ UnrealEngine/Engine/Plugins/td-ue4-sdk
 
 ### Build the plugin
 
-To build the plugin is required to generate the build-rules, for the purpose the UE4 Engine provides a script called __GenerateProjectFiles__:
-
-- GenerateProjectFiles.bat
-- GenerateProjectFiles.sh
-
-Depending of the system (Unix bases or Window), run the proper script from the command line:
-
-- If the plugin is inside the Project directory (Project/Plugins), go to the Project root directory and run the script.
-- If the plugin is inside the Engine, run the command from the Unreal Engine source root directory.
-
-Once the command have finished, type the _make_ command:
-
-```bash
-$ make
-```
-
-After a few seconds the plugin binary should be available.
-
-#### Speed up plugin build phase
-
-In some cases is required to re-build only the plugin, using a normal _make_ command can take some minutes as it does some parsing running some scripts to fix dependencies, to speed up the process the following options can be added:
-
-```bash
-$ make UE4Editor ARGS=-canskiplink
-```
+Follow the steps in this documentation [UnrealEngine up and running](https://github.com/EpicGames/UnrealEngine#getting-up-and-running) to build the `td-ue4-sdk` plugin
 
 ### Enable the Analytics plugins for your project
 
-Inside the Unreal Engine 4 Editor, open your project and the _plugins_ window:
+Inside the Unreal Engine 5 Editor, open your project and the _plugins_ window:
 
 - Edit > Plugins
 
@@ -80,21 +63,21 @@ From your project directory, open and edit the file _Config/DefaultEngine.ini_ a
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
-TDRegion=[US02,AP01,AP02,AP03,EU01]
+TDRegion=[US01,AP01,AP02,AP03,EU01]
 SendInterval=10
 
 [AnalyticsDevelopment]
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
-TDRegion=[US02,AP01,AP02,AP03,EU01]
+TDRegion=[US01,AP01,AP02,AP03,EU01]
 SendInterval=10
 
 [AnalyticsTest]
 ProviderModuleName=TreasureData
 TDApiKey=TD-WRITE-ONLY-KEY
 TDDatabase=DATABASE_NAME
-TDRegion=[US02,AP01,AP02,AP03,EU01]
+TDRegion=[US01,AP01,AP02,AP03,EU01]
 SendInterval=10
 ```
 
@@ -110,7 +93,7 @@ In the Editor, click on the Blueprints dropdown menu and click on the _Open Leve
 
 Now in the Event graphs, different events can be connected to Analytics functions, as an example the following image demonstrate how to track the _Session Start_, _Session End_ and _Record Event w/Attributes_ events:
 
-![](docs/assets/ue4_editor_002.jpg)
+![](docs/assets/ue5_editor_001.png)
 
 After a Game starts, the plugin will send the events to Treasure Data.
 

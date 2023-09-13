@@ -26,13 +26,13 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
             const FString DBName = GetConfigValue.Execute(TEXT("TDDatabase"), true);
 			const FString TRegion = GetConfigValue.Execute(TEXT("TDRegion"), false);
 
-			FAnalyticsProviderTreasureData::FAnalyticsRegion Region = FAnalyticsProviderTreasureData::US02;
+			FAnalyticsProviderTreasureData::FAnalyticsRegion Region = FAnalyticsProviderTreasureData::US01;
 
 			if (!TRegion.IsEmpty())
 			{
-				if (TRegion.ToUpper().Equals("US02"))
+				if (TRegion.ToUpper().Equals("US01"))
 				{
-					Region = FAnalyticsProviderTreasureData::US02;
+					Region = FAnalyticsProviderTreasureData::US01;
 				}
 				else if (TRegion.ToUpper().Equals("AP01"))
 				{
@@ -52,7 +52,7 @@ TSharedPtr<IAnalyticsProvider> FAnalyticsTreasureData::CreateAnalyticsProvider(c
 				}
 				else
 				{
-					UE_LOG(LogAnalytics, Warning, TEXT("Invalid/Unknown value for TDRegion. Defaulting to 'US02'"));
+					UE_LOG(LogAnalytics, Warning, TEXT("Invalid/Unknown value for TDRegion. Defaulting to 'US01'"));
 				}
 			}
 
@@ -75,7 +75,7 @@ FAnalyticsProviderTreasureData::FAnalyticsProviderTreasureData(const FString Key
   Region(ERegion),
   bHasSessionStarted(false)
 {
-    // Require TD to add IP field
+    /** Require TD to add IP field */
     AddEventAttribute("td_ip", "td_ip");
     AddEventAttribute("td_locale_lang",
                       FPlatformMisc::GetDefaultLanguage());
@@ -97,7 +97,7 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
         UE_LOG(LogAnalytics, Display, TEXT("[TD] Session Started %s"), *ApiKey);
 
         if (!bHasSessionStarted && ApiKey.Len() > 0)
-	{
+	      {
              bHasSessionStarted = true;
 
              SessionId = UserId + TEXT("-") + FDateTime::Now().ToString();
@@ -112,23 +112,31 @@ bool FAnalyticsProviderTreasureData::StartSession(const TArray<FAnalyticsEventAt
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
 
-            // Append fixed attributes
+			      JsonWriter->WriteArrayStart("events");
+            JsonWriter->WriteObjectStart();
+
+            /** Append fixed attributes */
             for (i = 0; i < EventAttributes.Num(); i++) {
               if (EventAttributes[i].GetValue().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].GetName(),
                                        EventAttributes[i].GetValue());
               }
             }
-
             JsonWriter->WriteValue(FString("user_id"), UserId);
             JsonWriter->WriteValue(FString("start_time"), now_unix);
+
+            JsonWriter->WriteObjectEnd();
+			      JsonWriter->WriteArrayEnd();
+
             JsonWriter->WriteObjectEnd();
             JsonWriter->Close();
+			      UE_LOG(LogAnalytics, Display, TEXT("StartSession payload: %s"), *outStr);
 
             TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
             HttpRequest->SetVerb("POST");
-            HttpRequest->SetHeader("Content-Type", "application/json");
-            HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
+            HttpRequest->SetHeader("Content-Type", "application/vnd.treasuredata.v1+json");
+            HttpRequest->SetHeader("Accept", "application/vnd.treasuredata.v1+json");
+            HttpRequest->SetHeader("Authorization", FString("TD1 ") + ApiKey);
             HttpRequest->SetURL(GetAPIURL() + Database + FString("/sessions"));
             HttpRequest->SetContentAsString(outStr);
 
@@ -150,24 +158,34 @@ void FAnalyticsProviderTreasureData::EndSession()
 
             int64 now_unix = FDateTime::Now().ToUnixTimestamp();
 
-            // Append fixed attributes
+			      JsonWriter->WriteArrayStart("events");
+            JsonWriter->WriteObjectStart();
+
+            /** Append fixed attributes */
             for (int i = 0; i < EventAttributes.Num(); i++) {
               if (EventAttributes[i].GetValue().Len() > 0) {
                 JsonWriter->WriteValue(EventAttributes[i].GetName(),
                                        EventAttributes[i].GetValue());
               }
             }
-
             JsonWriter->WriteValue(FString("user_id"), UserId);
-            JsonWriter->WriteValue(FString("end_time"), now_unix);
+            JsonWriter->WriteValue(FString("start_time"), now_unix);
+
+            JsonWriter->WriteObjectEnd();
+			      JsonWriter->WriteArrayEnd();
+
             JsonWriter->WriteObjectEnd();
             JsonWriter->Close();
 
-            // HTTP request
+			      UE_LOG(LogAnalytics, Display, TEXT("StartSession payload: %s"), *outStr);
+
+            /** HTTP request */
             TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
             HttpRequest->SetVerb("POST");
-            HttpRequest->SetHeader("Content-Type", "application/json");
-            HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
+
+            HttpRequest->SetHeader("Content-Type", "application/vnd.treasuredata.v1+json");
+            HttpRequest->SetHeader("Accept", "application/vnd.treasuredata.v1+json");
+            HttpRequest->SetHeader("Authorization", FString("TD1 ") + ApiKey);
             HttpRequest->SetURL(GetAPIURL() + Database + FString("/sessions"));
             HttpRequest->SetContentAsString(outStr);
 
@@ -237,42 +255,50 @@ void FAnalyticsProviderTreasureData::RecordEvent(const FString& EventName, const
 
          TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<TCHAR>::Create(&outStr);
 
-         // Write JSON message 
+         /** Write JSON message */
          JsonWriter->WriteObjectStart();
+         JsonWriter->WriteArrayStart("events");
+         JsonWriter->WriteObjectStart();
+
+
          JsonWriter->WriteValue(FString("user_id"), UserId);
          JsonWriter->WriteValue(FString("player_time"), now_unix);
          JsonWriter->WriteValue(FString("action"), EventName);
 
-         // Write pre-set event attributes 
+         /** Write pre-set event attributes */
          for (i = 0; i < EventAttributes.Num(); i++) {
            if (EventAttributes[i].GetValue().Len() > 0) {
              JsonWriter->WriteValue(EventAttributes[i].GetName(),
-                                    EventAttributes[i].GetValue());
+                 EventAttributes[i].GetValue());
            }
          }
 
-         // Write received attributes
+         /** Write received attributes */
          for (i = 0; i < Attributes.Num(); i++) {
            if (Attributes[i].GetValue().Len() > 0) {
              JsonWriter->WriteValue(Attributes[i].GetName(),
-                                    Attributes[i].GetValue());
+                 Attributes[i].GetValue());
            }
          }
          JsonWriter->WriteObjectEnd();
+         JsonWriter->WriteArrayEnd();
+
+         JsonWriter->WriteObjectEnd();
          JsonWriter->Close();
 
-         // HTTP Request
+         /** HTTP Request */
          TSharedRef< IHttpRequest, ESPMode::ThreadSafe > HttpRequest = FHttpModule::Get().CreateRequest();
          HttpRequest->SetVerb("POST");
-         HttpRequest->SetHeader("Content-Type", "application/json");
-         HttpRequest->SetHeader("X-TD-Write-Key", ApiKey);
+         HttpRequest->SetHeader("Content-Type", "application/vnd.treasuredata.v1+json");
+         HttpRequest->SetHeader("Accept", "application/vnd.treasuredata.v1+json");
+         HttpRequest->SetHeader("Authorization", FString("TD1 ") + ApiKey);
          HttpRequest->SetURL(GetAPIURL() + Database + FString("/events"));
          HttpRequest->SetContentAsString(outStr);
 
          HttpRequest->OnProcessRequestComplete().BindRaw(this, &FAnalyticsProviderTreasureData::EventRequestComplete);
          HttpRequest->ProcessRequest();
 
-         // Log posted data
+         /** Log posted data */
          UE_LOG(LogAnalytics, Display, TEXT("FAnalyticsProviderTreasureData::RecordEvent Post data: %s"), *outStr);
 }
 
